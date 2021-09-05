@@ -13,6 +13,7 @@ import (
     "github.com/gin-gonic/gin"
     "google.golang.org/grpc"
     "google.golang.org/grpc/metadata"
+    log "github.com/beego/beego/v2/adapter/logs"
 )
 
 var pool *gpool.GPool
@@ -26,7 +27,6 @@ func InitPool(addr string, init, capacity uint32, maxIdle time.Duration) error {
                      if err != nil {
                          return nil, err
                      }
-                     // return pb.NewUserServiceClient(conn), nil
                      return conn, nil
                  },
                  init, capacity, maxIdle)
@@ -44,26 +44,25 @@ type clientWrap struct {
     client pb.UserServiceClient
 }
 
-// get client
+// getRPCClient get a rpc client
 func getRPCClient() (*clientWrap, error) {
     // get conn
     ctx, cancel := context.WithDeadline(context.Background(),  time.Now().Add(10 * time.Millisecond))
     conn, err := pool.Get(ctx)
-    // call cancel to avoid leak
     cancel()
-
     if err != nil {
         return nil, err
     }
+
     client := pb.NewUserServiceClient(conn.C)
     return &clientWrap{conn, client}, nil
 }
 
-// freeclient
+// freeRPCClient free a rpc client
 func freeRPCClient(wrap* clientWrap) {
     err := pool.Put(wrap.conn)
     if err != nil {
-        //logs.Error("Failed to reclaime conn, err:", err.Error())
+        log.Error("Failed to reclaime conn, err:", err.Error())
     }
 }
 
@@ -79,6 +78,7 @@ func FormatResponse(c int, msg string, data map[string]string) map[string]interf
     if msg == "" {
         msg = code.CodeMsg[c]
     }
+
     return gin.H{"code": c, "msg": msg, "data": data}
 }
 
@@ -89,7 +89,7 @@ func Login(args map[string]string) (int, string, map[string]interface{}) {
     // communicate with rcp server
     client, err := getRPCClient()
     if err != nil {
-        //logs.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
+        log.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
         return http.StatusInternalServerError, "", FormatResponse(code.CodeInternalErr, "", nil)
     }
     defer freeRPCClient(client)
@@ -97,15 +97,17 @@ func Login(args map[string]string) (int, string, map[string]interface{}) {
     ctx := metadata.AppendToOutgoingContext(context.Background(), "uuid", uuid)
     rsp, err := client.client.Login(ctx, &pb.LoginRequest{Username: args["username"], Passwd: args["passwd"]})
     if err != nil {
-        //logs.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
+        log.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
         return http.StatusOK, "", FormatResponse(code.CodeErrBackend, "", nil)
     }
 
+    log.Debug(uuid, " -- Succ get token:", rsp.Token, " code:", rsp.Code)
+
     var token string
-    //logs.Debug(uuid, " -- Succ get token:", rsp.Token, " code:", rsp.Code)
     if rsp.Code == code.CodeSucc && rsp.Token != "" {
         token = rsp.Token
     }
+
     return http.StatusOK, token, FormatResponse(int(rsp.Code), rsp.Msg, map[string]string{"username":rsp.Username, "nickname":rsp.Nickname, "headurl":rsp.Headurl})
 }
 
@@ -116,7 +118,7 @@ func Logout(args map[string]string) (int, map[string]interface{}) {
     // communicate with rcp server
     client, err := getRPCClient()
     if err != nil {
-        //logs.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
+        log.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
         return http.StatusInternalServerError, FormatResponse(code.CodeInternalErr, "", nil)
     }
     defer freeRPCClient(client)
@@ -124,10 +126,11 @@ func Logout(args map[string]string) (int, map[string]interface{}) {
     ctx := metadata.AppendToOutgoingContext(context.Background(), "uuid", uuid)
     rsp, err := client.client.Logout(ctx, &pb.CommRequest{Token: args["token"], Username: args["username"]})
     if err != nil {
-        //logs.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
+        log.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
         return http.StatusOK, FormatResponse(code.CodeErrBackend, "", nil)
     }
-    //logs.Debug(uuid, "Succ to get response from backend with ", rsp.Code, " and msg:", rsp.Msg)
+    log.Debug(uuid, "Succ to get response from backend with ", rsp.Code, " and msg:", rsp.Msg)
+
     return http.StatusOK, FormatResponse(int(rsp.Code), rsp.Msg, nil)
 }
 
@@ -140,7 +143,7 @@ func EditUserinfo(args map[string]string) (int, map[string]interface{}) {
     // get connection
     client, err := getRPCClient()
     if err != nil {
-        //logs.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
+        log.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
         return http.StatusInternalServerError, FormatResponse(code.CodeInternalErr, "", nil)
     }
     defer freeRPCClient(client)
@@ -151,13 +154,14 @@ func EditUserinfo(args map[string]string) (int, map[string]interface{}) {
     editRsp, err := client.client.EditUserInfo(ctx,
                           &pb.EditRequest{Username: args["username"], Token: args["token"], Nickname: args["nickname"], Headurl: headurl, Mode: uint32(mode)})
     if err != nil {
-        //logs.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
+        log.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
         return http.StatusOK, FormatResponse(code.CodeErrBackend, "", nil)
     }
     data := map[string]string{}
     if editRsp.Code == 0 && headurl != "" {
         data["headurl"] = headurl
     }
+
     return http.StatusOK, FormatResponse(int(editRsp.Code), editRsp.Msg, data)
 }
 
@@ -168,7 +172,7 @@ func GetUserinfo(args map[string]string) (int, map[string]interface{}) {
     // communicate with rcp server
     client, err := getRPCClient()
     if err != nil {
-        //logs.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
+        log.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
         return http.StatusInternalServerError, FormatResponse(code.CodeInternalErr, "", nil)
     }
     defer freeRPCClient(client)
@@ -176,10 +180,11 @@ func GetUserinfo(args map[string]string) (int, map[string]interface{}) {
     ctx := metadata.AppendToOutgoingContext(context.Background(), "uuid", uuid)
     rsp, err := client.client.GetUserInfo(ctx, &pb.CommRequest{Token: args["token"], Username: args["username"]})
     if err != nil {
-        //logs.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
+        log.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
         return http.StatusOK, FormatResponse(code.CodeErrBackend, "", nil)
     }
     response := FormatResponse(int(rsp.Code), rsp.Msg, map[string]string{"username":rsp.Username, "nickname":rsp.Nickname, "headurl":rsp.Headurl})
+
     return http.StatusOK, response
 }
 
@@ -190,7 +195,7 @@ func Auth(args map[string]string) (int, int, string) {
     // communicate with rcp server
     client, err := getRPCClient()
     if err != nil {
-        //logs.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
+        log.Error(uuid, " -- Failed to getRPCClient, err:", err.Error())
         return http.StatusInternalServerError, code.CodeInternalErr, code.CodeMsg[code.CodeInternalErr]
     }
     defer freeRPCClient(client)
@@ -198,11 +203,12 @@ func Auth(args map[string]string) (int, int, string) {
     ctx := metadata.AppendToOutgoingContext(context.Background(), "uuid", uuid)
     rsp, err := client.client.GetUserInfo(ctx, &pb.CommRequest{Token: args["token"], Username: args["username"]})
     if err != nil {
-        //logs.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
+        log.Error(uuid, " -- Failed to communicate with TCP server, err:", err.Error())
         return http.StatusOK, code.CodeErrBackend, code.CodeMsg[code.CodeErrBackend]
     }
     if rsp.Code == 0 {
         return http.StatusOK, code.CodeSucc, code.CodeMsg[code.CodeSucc]
     }
+
     return http.StatusOK, int(rsp.Code), rsp.Msg
 }

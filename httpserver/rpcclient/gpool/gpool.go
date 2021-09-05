@@ -45,7 +45,7 @@ type GPool struct {
 // NewPool create pool
 func NewPool(factory Factory, init, capacity uint32, maxIdle time.Duration) (*GPool, error) {
     // check input args
-    if init < 0 || capacity <= 0 || capacity < init {
+    if capacity <= 0 || capacity < init {
         return nil, ErrInvalidConfig
     }
 
