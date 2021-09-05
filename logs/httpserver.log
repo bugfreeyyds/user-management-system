@@ -1,0 +1,29 @@
+2021/09/05 15:10:49.266  [I] [log.go:331]  httpserver init finished: listen on port: 8080
+2021/09/05 15:12:29.193  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- loginHandler access from: username8 @ e10adc3949ba59abbe56e057f20f883e
+2021/09/05 15:12:29.828  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Succ get token: 0545f115c13299c186379ca57c379c7a  code: 0
+2021/09/05 15:12:29.828  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Set token  0545f115c13299c186379ca57c379c7a with expire: 86400
+2021/09/05 15:12:29.828  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Succ get response from backend with 0  and msg: succ
+2021/09/05 15:17:23.768  [I] [log.go:331]  httpserver init finished: listen on port: 8080
+2021/09/05 15:21:27.400  [I] [log.go:331]  httpserver init finished: listen on port: 8080
+2021/09/05 15:21:35.456  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- loginHandler access from: username8 @ e10adc3949ba59abbe56e057f20f883e
+2021/09/05 15:21:35.467  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Succ get token: 6f5a5b59b9732c7ede24e09ef76c0431  code: 0
+2021/09/05 15:21:35.467  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Set token  6f5a5b59b9732c7ede24e09ef76c0431 with expire: 86400
+2021/09/05 15:21:35.467  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Succ get response from backend with 0  and msg: succ
+2021/09/05 15:30:33.716  [I] [log.go:331]  httpserver init finished: listen on port: 8080
+2021/09/05 15:30:58.295  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- loginHandler access from: username8 @ e10adc3949ba59abbe56e057f20f883e
+2021/09/05 15:30:58.303  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Succ get token: 6e5c1e9cfd53fdafdf14eaf48163367a  code: 0
+2021/09/05 15:30:58.303  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Set token  6e5c1e9cfd53fdafdf14eaf48163367a with expire: 86400
+2021/09/05 15:30:58.304  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Succ get response from backend with 0  and msg: succ
+2021/09/05 15:31:36.408  [E] [log.go:306]  Failed to get token from cookie, err: http: named cookie not present
+2021/09/05 15:32:16.152  [D] [log.go:336]  access from: username8  with token: 6e5c1e9cfd53fdafdf14eaf48163367a  and newname: nickname_8
+2021/09/05 15:32:16.152  [D] [log.go:336]  98b55d0c197b26b9befaf39946af8121  -- editNicknameHandler access from: username8  with token: 6e5c1e9cfd53fdafdf14eaf48163367a  new nickname: nickname_8
+2021/09/05 15:32:16.213  [D] [log.go:336]  98b55d0c197b26b9befaf39946af8121  -- Succ to get response from backend with  0  and msg: succ
+2021/09/05 15:32:51.454  [D] [log.go:336]  access from:   with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:32:51.454  [D] [log.go:336]  d5233f9b1dfe070533d9bfb1c1a7af2e  -- getUserinfoHandler access from:   with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:32:51.469  [D] [log.go:336]  d5233f9b1dfe070533d9bfb1c1a7af2e  -- Succ to get response from backend with  1202  and msg: tcp server: token cache info not match
+2021/09/05 15:33:29.434  [D] [log.go:336]  access from:   with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:33:29.434  [D] [log.go:336]  0a391edaccf17300dee1ea1387f183c6  -- getUserinfoHandler access from:   with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:33:29.441  [D] [log.go:336]  0a391edaccf17300dee1ea1387f183c6  -- Succ to get response from backend with  1202  and msg: tcp server: token cache info not match
+2021/09/05 15:34:18.530  [D] [log.go:336]  51c799d9a9c39cc13602f9172e37fa9e  -- logoutHandler access from: username8  with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:34:18.534  [D] [log.go:336]  51c799d9a9c39cc13602f9172e37fa9e Succ to get response from backend with  0  and msg: succ
+2021/09/05 15:34:18.534  [D] [log.go:336]  51c799d9a9c39cc13602f9172e37fa9e  -- Succ to get response from backend with  0  and msg: succ
