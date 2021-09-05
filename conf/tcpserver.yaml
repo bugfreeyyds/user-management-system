@@ -1,5 +1,5 @@
 log:
-  logfile: ../logs/tcpserver.log
+  logfile: ./logs/tcpserver.log
   loglevel: 7
   maxdays: 7
 server:
@@ -7,7 +7,7 @@ server:
 db:
   host: 127.0.0.1:3306
   user: root
-  passwd: passwd
+  passwd: 12345678 
   db: test
   conn:
     maxidle: 50

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"ums/conf"
-	"ums/tcpserver/types"
-	"ums/utils"
+	"user-management-system/conf"
+	"user-management-system/tcpserver/types"
+	"user-management-system/utils"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"

@@ -1,0 +1,69 @@
+2021/09/05 15:11:02.690  [I] [log.go:331]  cache and db init successfully!
+2021/09/05 15:11:02.690  [I] [log.go:331]  start to listen on localhost:9090
+2021/09/05 15:12:29.196  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Login access from: username8 @ e10adc3949ba59abbe56e057f20f883e
+2021/09/05 15:12:29.196  [D] [log.go:336]  try to get user info...
+2021/09/05 15:12:29.196  [D] [log.go:336]  try to get userinfo from cache...
+2021/09/05 15:12:29.196  [D] [log.go:336]  redisKey:  userinfo_username8
+2021/09/05 15:12:29.199  [D] [log.go:336]  try to get userinfo from db...
+2021/09/05 15:12:29.822  [D] [log.go:336]  redisKey:  userinfo_username8
+2021/09/05 15:12:29.823  [D] [log.go:336]  ttl:  5m0s s
+2021/09/05 15:12:29.825  [D] [log.go:336]  get user:  {1 username8 nickname_test 84850181fc0a050322172ec045b2cb23 dd987c  1630820260}
+2021/09/05 15:12:29.825  [D] [log.go:336]  passwd:  e4f49bcf3bf8cda43f6dfef0728776ef
+2021/09/05 15:12:29.825  [D] [log.go:336]  db passwd: 84850181fc0a050322172ec045b2cb23
+2021/09/05 15:12:29.825  [D] [log.go:336]  token redisKey:  token_0545f115c13299c186379ca57c379c7a
+2021/09/05 15:12:29.826  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Login succesfully,  username8 @ e10adc3949ba59abbe56e057f20f883e  with token: 0545f115c13299c186379ca57c379c7a
+2021/09/05 15:17:33.439  [I] [log.go:331]  init log finished!
+2021/09/05 15:17:33.448  [I] [log.go:331]  cache and db init successfully!
+2021/09/05 15:17:33.448  [D] [log.go:336]  new API successfully, new api: &{0xc000294070 0xc0000b2f80}
+
+2021/09/05 15:17:33.449  [I] [log.go:331]  start to listen on localhost:9090
+2021/09/05 15:21:32.550  [I] [log.go:331]  init log finished!
+2021/09/05 15:21:32.551  [I] [log.go:331]  newRedisClient successfully, client: &{0xc00023d780 0xc0001edd50}
+
+2021/09/05 15:21:32.566  [I] [log.go:331]  newDBClient supccessfully, client: &{0xc0002581a0}
+
+2021/09/05 15:21:32.566  [I] [log.go:331]  cache and db init successfully!
+2021/09/05 15:21:32.566  [D] [log.go:336]  new API successfully, new api: &{0xc000254080 0xc000010018}
+
+2021/09/05 15:21:32.567  [I] [log.go:331]  start to listen on localhost:9090
+2021/09/05 15:21:35.458  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Login access from: username8 @ e10adc3949ba59abbe56e057f20f883e
+2021/09/05 15:21:35.458  [D] [log.go:336]  try to get user info...
+2021/09/05 15:21:35.458  [D] [log.go:336]  try to get userinfo from cache...
+2021/09/05 15:21:35.458  [D] [log.go:336]  redisKey:  userinfo_username8
+2021/09/05 15:21:35.459  [D] [log.go:336]  try to get userinfo from db...
+2021/09/05 15:21:35.464  [D] [log.go:336]  redisKey:  userinfo_username8
+2021/09/05 15:21:35.464  [D] [log.go:336]  ttl:  5m0s s
+2021/09/05 15:21:35.465  [D] [log.go:336]  get user:  {1 username8 nickname_test 84850181fc0a050322172ec045b2cb23 dd987c  1630820260}
+2021/09/05 15:21:35.465  [D] [log.go:336]  passwd:  e4f49bcf3bf8cda43f6dfef0728776ef
+2021/09/05 15:21:35.465  [D] [log.go:336]  db passwd: 84850181fc0a050322172ec045b2cb23
+2021/09/05 15:21:35.465  [D] [log.go:336]  token redisKey:  token_6f5a5b59b9732c7ede24e09ef76c0431
+2021/09/05 15:21:35.465  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Login succesfully,  username8 @ e10adc3949ba59abbe56e057f20f883e  with token: 6f5a5b59b9732c7ede24e09ef76c0431
+2021/09/05 15:30:37.446  [I] [log.go:331]  init log finished!
+2021/09/05 15:30:37.447  [I] [log.go:331]  newRedisClient successfully, client: &{0xc00023d7c0 0xc000296010}
+
+2021/09/05 15:30:37.452  [I] [log.go:331]  newDBClient supccessfully, client: &{0xc000298340}
+
+2021/09/05 15:30:37.452  [I] [log.go:331]  cache and db init successfully!
+2021/09/05 15:30:37.452  [D] [log.go:336]  new API successfully, new api: &{0xc000294070 0xc000316008}
+
+2021/09/05 15:30:37.452  [I] [log.go:331]  start to listen on localhost:9090
+2021/09/05 15:30:58.299  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Login access from: username8 @ e10adc3949ba59abbe56e057f20f883e
+2021/09/05 15:30:58.299  [D] [log.go:336]  try to get user info...
+2021/09/05 15:30:58.299  [D] [log.go:336]  try to get userinfo from cache...
+2021/09/05 15:30:58.299  [D] [log.go:336]  redisKey:  userinfo_username8
+2021/09/05 15:30:58.300  [D] [log.go:336]  get user:  {1 username8 nickname_test 84850181fc0a050322172ec045b2cb23 dd987c  1630820260}
+2021/09/05 15:30:58.300  [D] [log.go:336]  passwd:  e4f49bcf3bf8cda43f6dfef0728776ef
+2021/09/05 15:30:58.300  [D] [log.go:336]  db passwd: 84850181fc0a050322172ec045b2cb23
+2021/09/05 15:30:58.300  [D] [log.go:336]  token redisKey:  token_6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:30:58.301  [D] [log.go:336]  4ee1a049facf8121b079650fba57cff2  -- Login succesfully,  username8 @ e10adc3949ba59abbe56e057f20f883e  with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:32:16.153  [D] [log.go:336]  98b55d0c197b26b9befaf39946af8121  -- EditUserInfo access from: username8  with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:32:16.212  [D] [log.go:336]  redisKey:  userinfo_username8
+2021/09/05 15:32:16.212  [D] [log.go:336]  ttl:  5m0s s
+2021/09/05 15:32:16.212  [D] [log.go:336]  token redisKey:  token_6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:32:16.213  [E] [log.go:306]  98b55d0c197b26b9befaf39946af8121  -- Succ to edit userinfo, affected rows is: 1
+2021/09/05 15:32:51.467  [D] [log.go:336]  d5233f9b1dfe070533d9bfb1c1a7af2e  -- GetUserInfo access from:   with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:32:51.468  [E] [log.go:306]  d5233f9b1dfe070533d9bfb1c1a7af2e  -- Error: token info not match:   while cache: username8
+2021/09/05 15:33:29.439  [D] [log.go:336]  0a391edaccf17300dee1ea1387f183c6  -- GetUserInfo access from:   with token: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:33:29.440  [E] [log.go:306]  0a391edaccf17300dee1ea1387f183c6  -- Error: token info not match:   while cache: username8
+2021/09/05 15:34:18.533  [D] [log.go:336]  51c799d9a9c39cc13602f9172e37fa9e  -- Logout access from: 6e5c1e9cfd53fdafdf14eaf48163367a
+2021/09/05 15:34:18.534  [D] [log.go:336]  51c799d9a9c39cc13602f9172e37fa9e  -- Succ to logout: 6e5c1e9cfd53fdafdf14eaf48163367a

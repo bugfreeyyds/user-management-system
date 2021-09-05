@@ -10,7 +10,7 @@ type User struct {
 	Passwd   string      `gorm:"types:varchar(32);not null"`
 	Skey     string      `gorm:"types:varchar(16);not null"`
 	Headurl  string      `gorm:"types:varchar(128);unique;not null"`
-	Uptime   int64      `gorm:"types:datetime"`
+	Uptime   int64       `gorm:"types:datetime"`
 }
 
 // TableName gorm use this to get tablename

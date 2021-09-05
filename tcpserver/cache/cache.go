@@ -8,9 +8,11 @@ import (
 	"time"
 
 	redis "github.com/go-redis/redis/v8"
-	"ums/conf"
-	"ums/tcpserver/consts"
-	"ums/tcpserver/types"
+	"user-management-system/conf"
+	"user-management-system/tcpserver/consts"
+	"user-management-system/tcpserver/types"
+
+    log "github.com/beego/beego/v2/adapter/logs"
 )
 
 type cacheConfig struct {
@@ -59,6 +61,7 @@ func (c *RedisClient) CloseCache() error {
 // get cached userinfo
 func (c *RedisClient) GetUserCacheInfo(username string) (types.User, error) {
 	redisKey := consts.UserInfoPrefix + username
+    log.Debug("redisKey: ", redisKey)
 	val, err := c.client.Get(context.Background(), redisKey).Result()
 	var user types.User
 	if err != nil {
@@ -76,6 +79,8 @@ func (c *RedisClient) SetUserCacheInfo(user types.User) error {
 		return err
 	}
 	expired := time.Second * time.Duration(c.cacheConfig.userExpired)
+    log.Debug("redisKey: ", redisKey)
+    log.Debug("ttl: ", expired, "s")
 	_, err = c.client.Set(context.Background(), redisKey, val, expired).Result()
 	return err
 }
@@ -99,6 +104,7 @@ func (c *RedisClient) SetTokenInfo(user types.User, token string) error {
 	if err != nil {
 		return err
 	}
+    log.Debug("token redisKey: ", redisKey)
 	expired := time.Second * time.Duration(c.cacheConfig.tokenExpired)
 	_, err = c.client.Set(context.Background(), redisKey, val, expired).Result()
 	return err

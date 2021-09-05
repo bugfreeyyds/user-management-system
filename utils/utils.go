@@ -28,3 +28,11 @@ func GetFileSize(f multipart.File) (int, error) {
     return len(content), err
 }
 
+// for table
+func GetTableName(username string) string {
+    var value int
+    for _, c := range []rune(username) {
+        value = value + int(c)
+    }
+    return fmt.Sprintf("userinfo_tab_%d", value % 20)
+}

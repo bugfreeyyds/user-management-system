@@ -2,12 +2,15 @@ package tcpserver
 
 import (
 	"os"
+    "fmt"
 
-	"ums/conf"
-	"ums/tcpserver/cache"
-	"ums/tcpserver/consts"
-	"ums/tcpserver/db"
-	"ums/tcpserver/types"
+	"user-management-system/conf"
+	"user-management-system/tcpserver/cache"
+	"user-management-system/tcpserver/consts"
+	"user-management-system/tcpserver/db"
+	"user-management-system/tcpserver/types"
+
+	log "github.com/beego/beego/v2/adapter/logs"
 )
 
 // API
@@ -21,17 +24,21 @@ func NewAPI(config *conf.TCPConf) *API {
 	// init redis
 	redisClient, err := cache.NewRedisClient(config)
 	if err != nil {
-		//logs.Critical("initRedisConn failed:", err.Error())
+		log.Critical("initRedisConn failed:", err.Error())
 		os.Exit(-1)
 	}
+    log.Info("newRedisClient successfully, client: %v\n", redisClient)
 
 	// init db
 	dbClient, err := db.NewDBClient(config)
 	if err != nil {
-		//logs.Critical("initDbConn failed:", err.Error())
+		log.Critical("initDbConn failed:", err.Error())
+        fmt.Printf("newDBClient failed, error: %v\n", err)
 		os.Exit(-1)
 	}
-	//logs.Info("init successfully!")
+    log.Info("newDBClient supccessfully, client: %v\n", dbClient)
+	log.Info("cache and db init successfully!")
+
 	return &API{
 		redisClient: redisClient,
 		dbClient:    dbClient,
@@ -46,6 +53,7 @@ func (a *API) Finalize() {
 
 // GetUserInfo get user info
 func (a *API) GetUserInfo(username string) (types.User, error) {
+    log.Debug("try to get userinfo from cache...") 
 	// try cache
 	user, err := a.redisClient.GetUserCacheInfo(username)
 	if err == nil && user.Username == username {
@@ -53,15 +61,15 @@ func (a *API) GetUserInfo(username string) (types.User, error) {
 	}
 
 	// get from db
+    log.Debug("try to get userinfo from db...") 
 	user, err = a.dbClient.GetDbUserInfo(username)
 	if err != nil {
 		return user, err
 	}
 
 	// update cache
-	serr := a.redisClient.SetUserCacheInfo(user)
-	if serr != nil {
-		//logs.Error("cache userinfo failed for user:", user.Username, " with err:", serr.Error())
+	if err := a.redisClient.SetUserCacheInfo(user); err != nil {
+		log.Error("cache userinfo failed for user:", user.Username, " with err:", err.Error())
 	}
 
 	return user, err
@@ -91,12 +99,12 @@ func (a *API) EditUserInfo(username, nickname, headurl, token string, mode uint3
 			if token != "" {
 				err = a.redisClient.SetTokenInfo(user, token)
 				if err != nil {
-					//logs.Error("update token failed:", err.Error())
+					log.Error("update token failed:", err.Error())
 					a.redisClient.DelTokenInfo(token)
 				}
 			}
 		} else {
-			//logs.Error("Failed to get dbUserInfo for cache, username:", username, " with err:", err.Error())
+			log.Error("Failed to get dbUserInfo for cache, username:", username, " with err:", err.Error())
 		}
 	}
 	return affectedRows
@@ -106,11 +114,11 @@ func (a *API) EditUserInfo(username, nickname, headurl, token string, mode uint3
 func (a *API) Auth(username, token string) bool {
 	user, err := a.redisClient.GetTokenInfo(token)
 	if err != nil {
-		//logs.Error("failed to getTokenInfo, token:", token)
+		log.Error("failed to getTokenInfo, token:", token)
 		return false
 	}
 	if user.Username != username {
-		//logs.Error("invalid token info, username not match!")
+		log.Error("invalid token info, username not match!")
 		return false
 	}
 	return true

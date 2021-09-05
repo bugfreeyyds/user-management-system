@@ -3,11 +3,11 @@ package tcpserver
 import (
 	"context"
 
-	"ums/code"
-	pb "ums/proto"
-	"ums/utils"
+	"user-management-system/type/code"
+	pb "user-management-system/type/proto"
+	"user-management-system/utils"
 
-	logs "github.com/beego/beego/adapter/logs"
+	log "github.com/beego/beego/v2/adapter/logs"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -19,7 +19,7 @@ type UserServer struct {
 func getUUID(ctx context.Context) string {
 	var uuid string
 	md, ok := metadata.FromIncomingContext(ctx)
-	if ok == false {
+	if !ok {
 		return uuid
 	}
 	uuids := md.Get("uuid")
@@ -33,17 +33,21 @@ func getUUID(ctx context.Context) string {
 func (s *UserServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginResponse, error) {
 	// get uuid
 	uuid := getUUID(ctx)
-	logs.Debug(uuid, " -- Login access from:", in.Username, "@", in.Passwd)
+	log.Debug(uuid, " -- Login access from:", in.Username, "@", in.Passwd)
 	// query userinfo
-	user, err := getUserInfo(in.Username)
+	log.Debug("try to get user info...")
+	user, err := s.API.GetUserInfo(in.Username)
+    log.Debug("get user: ", user)
 	if err != nil {
-		logs.Error(uuid, " -- Failed to getUserInfo, ", in.Username, "@", in.Passwd, ", err:", err.Error())
+		log.Error(uuid, " -- Failed to getUserInfo, ", in.Username, "@", in.Passwd, ", err:", err.Error())
 		return &pb.LoginResponse{Code: code.CodeTCPFailedGetUserInfo, Msg: code.CodeMsg[code.CodeTCPFailedGetUserInfo]}, nil
 	}
 
 	// verify passwd
+    log.Debug("passwd: ", utils.Md5String("123456" + user.Skey))
+    log.Debug("db passwd:", user.Passwd)
 	if utils.Md5String(in.Passwd+user.Skey) != user.Passwd {
-		logs.Error(uuid, " -- Failed to match passwd ", in.Username, "@", in.Passwd, " salt:", user.Skey, " realpwd:", user.Passwd)
+		log.Error(uuid, " -- Failed to match passwd ", in.Username, "@", in.Passwd, " salt:", user.Skey, " realpwd:", user.Passwd)
 		return &pb.LoginResponse{Code: code.CodeTCPPasswdErr, Msg: code.CodeMsg[code.CodeTCPPasswdErr]}, nil
 	}
 
@@ -51,10 +55,10 @@ func (s *UserServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 	token := utils.GenerateToken(user.Username)
 	err = s.API.redisClient.SetTokenInfo(user, token)
 	if err != nil {
-		logs.Error(uuid, " -- Failed to set token for user:", user.Username, " err:", err.Error())
+		log.Error(uuid, " -- Failed to set token for user:", user.Username, " err:", err.Error())
 		return &pb.LoginResponse{Code: code.CodeTCPInternelErr, Msg: code.CodeMsg[code.CodeTCPInternelErr]}, nil
 	}
-	logs.Debug(uuid, " -- Login succesfully, ", in.Username, "@", in.Passwd, " with token:", token)
+	log.Debug(uuid, " -- Login succesfully, ", in.Username, "@", in.Passwd, " with token:", token)
 	return &pb.LoginResponse{Username: user.Username, Nickname: user.Nickname, Headurl: user.Headurl, Token: token, Code: code.CodeSucc}, nil
 }
 
@@ -62,26 +66,26 @@ func (s *UserServer) Login(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 func (s *UserServer) GetUserInfo(ctx context.Context, in *pb.CommRequest) (*pb.LoginResponse, error) {
 	// get uuid
 	uuid := getUUID(ctx)
-	logs.Debug(uuid, " -- GetUserInfo access from:", in.Username, " with token:", in.Token)
+	log.Debug(uuid, " -- GetUserInfo access from:", in.Username, " with token:", in.Token)
 	// get and verify token
 	token := in.Token
 	if len(token) != 32 {
-		logs.Error(uuid, " -- Error: invalid token:", in.Token)
+		log.Error(uuid, " -- Error: invalid token:", in.Token)
 		return &pb.LoginResponse{Code: code.CodeTCPInvalidToken, Msg: code.CodeMsg[code.CodeTCPInvalidToken]}, nil
 	}
 	// get userinfo and compare username
 	user, err := s.API.redisClient.GetTokenInfo(token)
 	if err != nil {
-		logs.Error(uuid, " -- Failed to get token:", in.Token, " with err:", err.Error())
+		log.Error(uuid, " -- Failed to get token:", in.Token, " with err:", err.Error())
 		return &pb.LoginResponse{Code: code.CodeTCPTokenExpired, Msg: code.CodeMsg[code.CodeTCPTokenExpired]}, nil
 	}
 
 	// check if username is the same
 	if user.Username != in.Username {
-		logs.Error(uuid, " -- Error: token info not match:", in.Username, " while cache:", user.Username)
+		log.Error(uuid, " -- Error: token info not match:", in.Username, " while cache:", user.Username)
 		return &pb.LoginResponse{Code: code.CodeTCPUserInfoNotMatch, Msg: code.CodeMsg[code.CodeTCPUserInfoNotMatch]}, nil
 	}
-	logs.Debug(uuid, " -- Succ to GetUserInfo :", in.Username, " with token:", in.Token)
+	log.Debug(uuid, " -- Succ to GetUserInfo :", in.Username, " with token:", in.Token)
 	return &pb.LoginResponse{Username: user.Username, Nickname: user.Nickname, Headurl: user.Headurl, Token: token, Code: code.CodeSucc}, nil
 }
 
@@ -89,15 +93,15 @@ func (s *UserServer) GetUserInfo(ctx context.Context, in *pb.CommRequest) (*pb.L
 func (s *UserServer) EditUserInfo(ctx context.Context, in *pb.EditRequest) (*pb.EditResponse, error) {
 	// get uuid
 	uuid := getUUID(ctx)
-	logs.Debug(uuid, " -- EditUserInfo access from:", in.Username, " with token:", in.Token)
+	log.Debug(uuid, " -- EditUserInfo access from:", in.Username, " with token:", in.Token)
 	// auth
-	authResult := s.API.Auth(in.Username, in.Token)
-	if authResult == false {
-		logs.Error(uuid, " -- Failed to auth for user:", in.Username, " with token:", in.Token)
+	pass := s.API.Auth(in.Username, in.Token)
+	if !pass {
+		log.Error(uuid, " -- Failed to auth for user:", in.Username, " with token:", in.Token)
 		return &pb.EditResponse{Code: code.CodeTCPTokenExpired, Msg: code.CodeMsg[code.CodeTCPTokenExpired]}, nil
 	}
 	affectRows := s.API.EditUserInfo(in.Username, in.Nickname, in.Headurl, in.Token, in.Mode)
-	logs.Error(uuid, " -- Succ to edit userinfo, affected rows is:", affectRows)
+	log.Error(uuid, " -- Succ to edit userinfo, affected rows is:", affectRows)
 	return &pb.EditResponse{Code: code.CodeSucc, Msg: code.CodeMsg[code.CodeSucc]}, nil
 }
 
@@ -105,11 +109,11 @@ func (s *UserServer) EditUserInfo(ctx context.Context, in *pb.EditRequest) (*pb.
 func (s *UserServer) Logout(ctx context.Context, in *pb.CommRequest) (*pb.EditResponse, error) {
 	// get uuid
 	uuid := getUUID(ctx)
-	logs.Debug(uuid, " -- Logout access from:", in.Token)
+	log.Debug(uuid, " -- Logout access from:", in.Token)
 	err := s.API.redisClient.DelTokenInfo(in.Token)
 	if err != nil {
-		logs.Error(uuid, " -- Failed to delTokenInfo :", err.Error())
+		log.Error(uuid, " -- Failed to delTokenInfo :", err.Error())
 	}
-	logs.Debug(uuid, " -- Succ to logout:", in.Token)
+	log.Debug(uuid, " -- Succ to logout:", in.Token)
 	return &pb.EditResponse{Code: code.CodeSucc, Msg: code.CodeMsg[code.CodeSucc]}, nil
 }
