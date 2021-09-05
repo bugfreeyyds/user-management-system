@@ -62,16 +62,16 @@ func main() {
 	gin.DefaultWriter = ioutil.Discard
 
 	engine := gin.Default()
-	engine.Any("/welcome", webRoot)
-	engine.POST("/login", loginHandler)
-	engine.POST("/logout", logoutHandler)
-	engine.GET("/getuserinfo", getUserinfoHandler)
-	engine.POST("/editnickname", editNicknameHandler)
-	engine.POST("/uploadpic", uploadHeadurlHandler)
+	engine.Any("/api/v1/welcome", webRoot)
+	engine.POST("/api/v1/login", loginHandler)
+	engine.POST("/api/v1/logout", logoutHandler)
+	engine.GET("/api/v1/getuserinfo", getUserinfoHandler)
+	engine.POST("/api/v1/editnickname", editNicknameHandler)
+	engine.POST("/api/v1/uploadpic", uploadHeadurlHandler)
 
-	engine.POST("/randlogin", randomLoginHandler)
-	engine.Static("/static/", "./static/")
-	engine.Static("/upload/images/", "./upload/images/")
+	engine.POST("/api/v1/randlogin", randomLoginHandler)
+	engine.Static("/api/v1/static/", "./static/")
+	engine.Static("/api/v1/upload/images/", "./upload/images/")
 
 	engine.Run(fmt.Sprintf(":%d", config.Server.Port))
 }
