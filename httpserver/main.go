@@ -69,7 +69,6 @@ func main() {
 	engine.POST("/api/v1/editnickname", editNicknameHandler)
 	engine.POST("/api/v1/uploadpic", uploadHeadurlHandler)
 
-	engine.POST("/api/v1/randlogin", randomLoginHandler)
 	engine.Static("/api/v1/static/", "./static/")
 	engine.Static("/api/v1/upload/images/", "./upload/images/")
 
